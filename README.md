@@ -43,12 +43,14 @@ _**Not:** Asagida belirtilen ana basliklar, en cok kullanilan metodoloji olan CR
         + Splitting Cells
     - Data Preprocessing (Data Wrangling?)
         + Data Cleansing
-            - Missing, Outlier, Inconsistent and Noisy Data Analysis
+            - Missing, Inconsistent and Noisy Data, and Outlier Analysis
             - Converting Data Types
         + Data Transformation (Manipulation)
             - Feature Engineering
             - Feature Scaling (Standardization, Normalization)
             - Feature Selection (Data Reduction)
+                * Checking Correlation
+                * Dimensionality Reduction (PCA, Lasso..)
     - Data Exploration (EDA)
         + Summary
         + Visual
