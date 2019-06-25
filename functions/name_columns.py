@@ -15,6 +15,9 @@ def name_columns(data):
     data.columns = data.columns.str.replace(".", "")
     
     # Replace "_&_" with "&"
-    data.columns = data.columns.str.replace("_&_", "&")
+    data.columns = data.columns.str.replace("_&_", "_")
+    
+    # Replace "-" with "_"
+    data.columns = data.columns.str.replace("-", "_")
     
     return data.columns
