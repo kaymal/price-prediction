@@ -6,7 +6,7 @@ There are several Data Analytics methodologies. Three popular methodologies are 
 
 2. [Dataset](https://github.com/kaymal/fraud-detection/tree/master/data)
 
-3. [Data Understanading and Preparation](https://github.com/kaymal/fraud-detection/blob/master/data-understanding-preparation.ipynb)
+3. [Data Understanding and Preparation](https://github.com/kaymal/fraud-detection/blob/master/data-understanding-preparation.ipynb)
 
 4. [Modeling]
 
