@@ -1,5 +1,7 @@
 def clean_m(data):
+    
     df=data
+    
     #cleaning registration column and convertinf it to age column
     reg_new = df.registration[~df.registration.str.contains("-")]
     reg_new = pd.to_datetime(reg_new, format='%m/%Y')
@@ -36,8 +38,8 @@ def clean_m(data):
         
     name_columns(df)
     
-    drop_list=['availability', 'body_color_original', 'full_service',
+    drop_list=['entertainment_media', 'availability', 'body_color_original', 'full_service',
        'last_timing_belt_service_date', 'null', 'registration', 'short_description']
     df.drop(drop_list, axis=1, inplace=True)
-    df.columns=df.columns.str.translate({ord('\n'): None})
-    
+        
+    return df
