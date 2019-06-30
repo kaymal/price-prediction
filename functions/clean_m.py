@@ -1,46 +1,45 @@
-def string_to_list(data, column_name):
-     # Create a boolean vector for indexing
-    not_NaN_rows = data[column_name].notnull()
-    
-    # Change the type of notNaNs from 'string' to (empty) 'list'
-    data.loc[not_NaN_rows, column_name] = data.loc[not_NaN_rows, column_name].apply(lambda x: x.split(','))
-
 def clean_m(data):
     
     df=data
     
+    #cleaning registration column and convertinf it to age column
     reg_new = df.registration[~df.registration.str.contains("-")]
     reg_new = pd.to_datetime(reg_new, format='%m/%Y')
     reg_year = reg_new.apply(lambda x: x.year)
-    
     df['age'] = 2019 - reg_year
     
-    df=df.join(df['gearing_type'].str.join('|').str.get_dummies().add_prefix('gearing_type_'))
+    df['gearing_type'] = df['gearing_type'].apply(lambda x:x[1])
     
-    df=df.join(df['body'].str.join('|').str.get_dummies().add_prefix('body_'))
+    df.loc[df['body'].notnull(), 'body'] = df.loc[df['body'].notnull(), 'body'].apply(lambda x: x[1])
     
-    df=df.join(df['body_color'].str.join('|').str.get_dummies().add_prefix('body_color_'))
-    
+    df.loc[df['body_color'].notnull(), 'body_color'] = df.loc[df['body_color'].notnull(), 'body_color'].apply(lambda x: x[1])
+         
     df=df.join(df['entertainment_media'].str.join('|').str.get_dummies().add_prefix('entertainment_media_'))
     
-    string_to_list(df, 'vat')
-    df=df.join(df['vat'].str.join('|').str.get_dummies().add_prefix('vat_'))
+    df['gears']=df.gears.str[0].str.replace("\n", "")
     
-    df=df.join(df['gears'].str.join('|').str.get_dummies().add_prefix('gears_'))
+    df['paint_type']=df.paint_type.str[0].str.replace("\n", "")
     
-    df=df.join(df['paint_type'].str.join('|').str.get_dummies().add_prefix('paint_type_'))
+    # converting inspection_new column to 1 if it contains Yes expression, else: 0
+    df["inspection_new"] = df.inspection_new.str[0].str.contains("Yes", na=False)*1
+     
+    # extracting the number of days in availabiltiy column and converting column name to available_after_days
+    df['availability'] = df.availability.str.extract(r'(\d+)')
+    df['available_after_days'] = df.availability.apply(pd.to_numeric)
     
+    # finding right pattern for date in a mixed column: 2 digits/4 digits to extract the date
+    df['last_service_date'] = df.last_service_date.str[0].str.extract(r'(\d{2}\/\d{4})')
+    # converting to datetime object
+    df['last_service_date'] = pd.to_datetime(df['last_service_date'], format='%m/%Y')
+    
+    #cleaning the available_from column and converting to datetime
+    df['available_from'] = df.available_from.str.strip("\n")
+    df['available_from'] = pd.to_datetime(df['available_from'])
+        
     name_columns(df)
     
-    drop_list=['entertainment_media', 'availability', 'available_from', 'body',
-       'body_color', 'body_color_original', 'full_service', 'gearing_type',
-       'gears', 'inspection_new', 'last_service_date',
-       'last_timing_belt_service_date', 'paint_type', 'null', 
-       'registration', 'short_description', 'vat', 'gearing_type_',
-       'body_', 'body_color_']
+    drop_list=['entertainment_media', 'availability', 'body_color_original', 'full_service',
+       'last_timing_belt_service_date', 'null', 'registration', 'short_description']
     df.drop(drop_list, axis=1, inplace=True)
-    
-    df.columns=df.columns.str.translate({ord('\n'): None})
-    
-    
+        
     return df
