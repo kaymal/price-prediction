@@ -33,9 +33,11 @@ def clean_t (data):
     # Change the 'cylinders' columns data type to numeric
     df_new['cylinders'] = pd.to_numeric(df_new['cylinders'])
     
-    # Extract discplacement values (and remove commas)
+    # Extract displacement values (and remove commas)
     df_new['displacement'] = df.displacement.str[0].str.replace(",","").str.extract(r'(\d+)')
-    
+    # Change the type of displacement from object to numeric
+    df_new['displacement'] = pd.to_numeric(df_new['displacement'])
+
     # Extract 'next_inspection' values
     df_new.next_inspection = df.next_inspection.str[0].str.strip("\n")
     # Create a boolean column from `next_inspection`
@@ -46,12 +48,15 @@ def clean_t (data):
     
     # Extract hp from 'hp' column
     df_new['hp'] = df.hp.str.extract(r'(\d+)')
+    # Change datatype to numeric
+    df_new['hp'] = pd.to_numeric(df_new['hp'])
     
     # Drop 'kw' column
     df_new.drop('kw', axis=1, inplace=True)
     
     # Clean 'km' column
     df_new['km'] = df.km.str.replace(",", "").str.extract(r'(\d+)')
+    
     
     # Clean "offer_number' column
     df_new['offer_number'] = df.offer_number.str[0].str.replace("\n","")
@@ -62,5 +67,14 @@ def clean_t (data):
     df_new['consumption_comb'] = df[comb_bool].consumption.str[0].str[0].str.extract(r'(\d.\d|\d)')
     # Drop 'consumption' column
     df_new.drop('consumption', axis=1, inplace=True)
+    
+    # Tidy column names
+    df_new.columns = name_columns(df_new)
+    
+    # Tidy column names
+    df_new.columns = name_columns(df_new)
+    
+    # Change description from list to string
+    df_new['description'] = df['description'].str.join('').str.strip("\n")[0]
     
     return df_new
