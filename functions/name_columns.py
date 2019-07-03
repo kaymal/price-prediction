@@ -20,4 +20,7 @@ def name_columns(data):
     # Replace "-" with "_"
     data.columns = data.columns.str.replace("-", "_")
     
+    # Replace "\n" with ""
+    data.columns = data.columns.str.replace("\n", "")
+    
     return data.columns
