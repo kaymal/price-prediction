@@ -1,0 +1,53 @@
+from datetime import datetime
+
+def clean_m(data):
+    df=data
+    
+    reg_new = df.registration[~df.registration.str.contains("-")]
+    reg_new = pd.to_datetime(reg_new, format='%m/%Y')
+    reg_year = reg_new.apply(lambda x: x.year)
+    
+    df['age'] = 2019 - reg_year
+    
+    df=df.join(df['gearing_type'].str.join('|').str.get_dummies().add_prefix('gearing_type_'))
+    
+    df=df.join(df['body'].str.join('|').str.get_dummies().add_prefix('body_'))
+    
+    df=df.join(df['body_color'].str.join('|').str.get_dummies().add_prefix('body_color_'))
+    
+    df=df.join(df['entertainment_media'].str.join('|').str.get_dummies().add_prefix('entertainment_media_'))
+    
+    string_to_list(df, 'vat')
+    df=df.join(df['vat'].str.join('|').str.get_dummies().add_prefix('vat_'))
+    
+    df=df.join(df['gears'].str.join('|').str.get_dummies().add_prefix('gears_'))
+    
+    df=df.join(df['paint_type'].str.join('|').str.get_dummies().add_prefix('paint_type_'))
+    
+    df["inspection_new"] = df.inspection_new.str[0].str.contains("Yes", na=False)*1
+     
+    df['availability'] = df.availability.str.extract(r'(\d+)')
+    df['availability_days'] = df.availability.apply(pd.to_numeric)
+    
+    df['last_service_date'] = df.last_service_date.str[0].str.extract(r'(\d{2}\/\d{4})')
+    df['last_service_date'] = pd.to_datetime(df['last_service_date'], format='%m/%Y')
+    df['days_since_last_service']=datetime.now() - df['last_service_date']
+    df['days_since_last_service']=df.days_since_last_service.apply(lambda x:x.days)
+    
+    df['available_from'] = df.available_from.str.strip("\n")
+    df['available_from'] = pd.to_datetime(df['available_from'])
+        
+    
+    name_columns(df)
+    
+    drop_list=['entertainment_media', 'availability', 'body',
+       'body_color', 'body_color_original', 'full_service', 'gearing_type',
+       'gears', 'last_service_date',
+       'last_timing_belt_service_date', 'paint_type', 'null', 
+       'registration', 'short_description', 'vat', 'gearing_type_',
+       'body_', 'body_color_']
+    df.drop(drop_list, axis=1, inplace=True)
+    
+    df.columns=df.columns.str.translate({ord('\n'): None})
+    
+    return df
