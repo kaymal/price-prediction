@@ -1,3 +1,9 @@
+#!/usr/bin/env python
+# coding: utf-8
+
+# In[ ]:
+
+
 def clean_v(data):
     
     df_v=data
@@ -6,10 +12,12 @@ def clean_v(data):
     df_v.columns = [x.casefold().strip().replace(" ","_").replace("_&_","_").replace(".","").replace("-", "_") for x in df_v.columns]
     
     # Create dummies using the items in the list of 'safety&security' column
-    df_v = df_v.join(df_v['comfort_convenience'].str.join('|').str.get_dummies().add_prefix('cc_'))
-
+    co_co = df_v[['comfort_convenience']].dropna()
+    df_v = df_v.join(co_co['comfort_convenience'].str.join('|').str.get_dummies().add_prefix('cc_'))
+    
     # Create dummies using the items in the list of 'safety&security' column
-    df_v = df_v.join(df_v['extras'].str.join('|').str.get_dummies().add_prefix('ext_'))
+    ext = df_v[['extras']].dropna()
+    df_v = df_v.join(ext['extras'].str.join('|').str.get_dummies().add_prefix('ext_'))
 
     #cleaning and reassigning "drive_chain" column
     chain = df_v.drive_chain
@@ -17,8 +25,9 @@ def clean_v(data):
     df_v.drive_chain = pd.DataFrame(chain_str)
     
     #cleaning and reassigning "electricity_consumption" column
-    electricity = [item[0].strip() if type(item) == list else item for item in df_v.electricity_consumption]
+    electricity = [item[0].strip()[0] if type(item) == list else item for item in df_v.electricity_consumption]
     df_v.electricity_consumption = pd.DataFrame(electricity)
+    
     #cleaning and reassigning "emission_class" column 1/3
     emis = df_v['emission_class']
     #cleaning and reassigning "emission_class" column 2/3
@@ -33,6 +42,7 @@ def clean_v(data):
             emis_list.append(np.nan)
     #cleaning and reassigning "emission_class" column 3/3
     df_v.emission_class = pd.DataFrame(emis_list)
+    
     #cleaning and reassigning "emission_label" column 1/3
     emlabel = df_v.emission_label
     #cleaning and reassigning "emission_label" column 2/3
@@ -104,7 +114,7 @@ def clean_v(data):
     powner = df_v.prev_owner
     powner_list = [item.split()[0] if type(item) == str else item for item in powner]
     df_v.prev_owner = pd.DataFrame(powner_list)
-    columns_to_drop = [ "electricity_consumption", "other_fuel_types", "weight", "comfort_convenience", "extras", ]
+    columns_to_drop = [ "other_fuel_types", "weight", "comfort_convenience", "extras", ]
     
     # Drop unnecesary columns
     df_v.drop(columns_to_drop, axis=1, inplace=True)
@@ -113,3 +123,4 @@ def clean_v(data):
     df_v.columns = [x.casefold().strip().replace(" ","_").replace("_&_","_").replace(".","").replace("-", "_") for x in     df_v.columns]
     
     return df_v
+
