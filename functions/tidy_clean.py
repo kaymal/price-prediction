@@ -119,8 +119,8 @@ def clean_m(data):
     df['available_from'] = pd.to_datetime(df['available_from'])
         
     name_columns(df)
-    
-    drop_list=['entertainment_media', 'null', 'last_timing_belt_service_date', 'registration']
+    drop_list=['entertainment_media', 'availability', 'body_color_original', 'full_service',
+       'last_timing_belt_service_date', 'null', 'registration']
     df.drop(drop_list, axis=1, inplace=True)
         
     return df
