@@ -72,9 +72,6 @@ def clean_t (data):
     # Tidy column names
     df_new.columns = name_columns(df_new)
     
-    # Tidy column names
-    df_new.columns = name_columns(df_new)
-    
     # Change description from list to string
     df_new['description'] = df['description'].str.join('').str.strip("\n")[0]
     
