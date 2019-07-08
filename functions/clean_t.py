@@ -4,7 +4,8 @@ def clean_t (data):
     df = data
     
     # Create dummies using the items in the list of 'safety&security' column
-    df_new = df.join(df['safety_security'].str.join('|').str.get_dummies().add_prefix('ss_'))
+    ss = df['safety_security'].dropna()
+    df_new = df.join(ss.str.join('|').str.get_dummies().add_prefix('ss_'))
     # Drop 'safety_security' column
     df_new.drop('safety_security', axis=1, inplace=True)
     

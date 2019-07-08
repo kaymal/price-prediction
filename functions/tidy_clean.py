@@ -1,29 +1,84 @@
-def name_columns(data):
-    '''
-    Name columns with underscore(_) convention.
-    '''
-    # Clean "\n"s from the column names
-    data.columns = data.columns.str.strip("\n")
+def clean_t (data):
+    
+    # Select columns to clean
+    df = data
+    
+    # Create dummies using the items in the list of 'safety&security' column
+    ss = df['safety_security'].dropna()
+    df_new = df.join(ss.str.join('|').str.get_dummies().add_prefix('ss_'))
+    # Drop 'safety_security' column
+    df_new.drop('safety_security', axis=1, inplace=True)
+    
+    # Clean the model column
+    df_new['model'] = df.model.apply(lambda x: x[1])
+    
+    # Strip "\n"s from the 'make' column
+    df_new['make'] = df.make.str.strip("\n")
+    
+    # Drop unnecesary column 'make_model'
+    df_new.drop(columns = "make_model", inplace = True)
+    
+    # Clean 'model_code' column
+    df_new.loc[df_new.model_code.notnull(), "model_code"] = df.model_code[df.model_code.notnull()].apply(lambda x: str(x)[4:-4])
+    
+    # Clean 'country_version' column
+    df_new.loc[df_new.country_version.notnull(), "country_version"] = df.country_version[df.country_version.notnull()].apply(lambda x: str(x)[4:-4])
+    
+    # Clean 'co2_emission' column
+    df_new['co2_emission'] = df.co2_emission.str[0].str.extract(r'(\d+)')
+    # Change the 'co2' columns data type to numeric
+    df_new['co2_emission'] = pd.to_numeric(df_new.co2_emission)
+    
+    # Clean 'cylinders' column
+    df_new['cylinders'] = df.cylinders.str[0].str.extract(r'(\d+)')
+    # Change the 'cylinders' columns data type to numeric
+    df_new['cylinders'] = pd.to_numeric(df_new['cylinders'])
+    
+    # Extract displacement values (and remove commas)
+    df_new['displacement'] = df.displacement.str[0].str.replace(",","").str.extract(r'(\d+)')
+    # Change the type of displacement from object to numeric
+    df_new['displacement'] = pd.to_numeric(df_new['displacement'])
 
-    # Make lowercase
-    data.columns = data.columns.str.lower()
+    # Extract 'next_inspection' values
+    df_new.next_inspection = df.next_inspection.str[0].str.strip("\n")
+    # Create a boolean column from `next_inspection`
+    df_new['next_inspection_bool'] = df_new.next_inspection.notnull()
     
-    # Replace space with underscore(_)
-    data.columns = data.columns.str.replace(" ", "_")
+    # Drop 'non-smoking_vehicle' column
+    df_new.drop("non_smoking_vehicle", axis=1, inplace=True)
     
-    # Replace . with ""
-    data.columns = data.columns.str.replace(".", "")
+    # Extract hp from 'hp' column
+    df_new['hp'] = df.hp.str.extract(r'(\d+)')
+    # Change datatype to numeric
+    df_new['hp'] = pd.to_numeric(df_new['hp'])
     
-    # Replace "_&_" with "&"
-    data.columns = data.columns.str.replace("_&_", "_")
+    # Drop 'kw' column
+    df_new.drop('kw', axis=1, inplace=True)
     
-    # Replace "-" with "_"
-    data.columns = data.columns.str.replace("-", "_")
+    # Clean 'km' column
+    df_new['km'] = df.km.str.replace(",", "").str.extract(r'(\d+)')
     
-    # Replace "\n" with ""
-    data.columns = data.columns.str.replace("\n", "")
     
-    return data.columns
+    # Clean "offer_number' column
+    df_new['offer_number'] = df.offer_number.str[0].str.replace("\n","")
+    
+    # Create a boolean for checking "combined" consumption
+    comb_bool = df.consumption.str[0].str[0].str.contains("comb", na=False)
+    # Create a new column for 'consumption_comb'
+    df_new['consumption_comb'] = df[comb_bool].consumption.str[0].str[0].str.extract(r'(\d.\d|\d)')
+    # Drop 'consumption' column
+    df_new.drop('consumption', axis=1, inplace=True)
+    
+    # Tidy column names
+    df_new.columns = name_columns(df_new)
+    
+    # Tidy column names
+    df_new.columns = name_columns(df_new)
+    
+    # Change description from list to string
+    df_new['description'] = df['description'].str.join('').str.strip("\n")[0]
+    
+    return df_new
 
 def clean_m(data):
     
@@ -68,10 +123,7 @@ def clean_m(data):
         
     name_columns(df)
     
-    drop_list=['entertainment_media', 'availability', 'body_color_original', 'full_service',
-       'last_timing_belt_service_date', 'null', 'registration', 'short_description', 'gears',
-       'paint_type', 'inspection_new', 'available_after_days', 'last_service_date', 
-       'available_from', 'vat']
+    drop_list=['entertainment_media', 'null', 'last_timing_belt_service_date', 'registration']
     df.drop(drop_list, axis=1, inplace=True)
         
     return df
@@ -182,93 +234,37 @@ def clean_v(data):
     powner = df_v.prev_owner
     powner_list = [item.split()[0] if type(item) == str else item for item in powner]
     df_v.prev_owner = pd.DataFrame(powner_list)
-    columns_to_drop = [ "electricity_consumption", "other_fuel_types", "weight", "comfort_convenience", "extras", ]
+    columns_to_drop = [ "electricity_consumption", "other_fuel_types", "weight", "comfort_convenience", "extras"]
     
     # Drop unnecesary columns
     df_v.drop(columns_to_drop, axis=1, inplace=True)
  
     # Standardisation of column names
-    df_v.columns = [x.casefold().strip().replace(" ","_").replace("_&_","_").replace(".","").replace("-", "_") for x in     df_v.columns]
+    df_v.columns = [x.casefold().strip().replace(" ","_").replace("_&_","_").replace(".","").replace("-", "_") for x in df_v.columns]
     
     return df_v
 
-def clean_t (data):
-    
-    # Select columns to clean
+def clean_update(data):
+    '''Additional cleaning after performing EDA'''
+
     df = data
     
-    # Create dummies using the items in the list of 'safety&security' column
-    df_new = df.join(df['safety_security'].str.join('|').str.get_dummies().add_prefix('ss_'))
-    # Drop 'safety_security' column
-    df_new.drop('safety_security', axis=1, inplace=True)
-    
-    # Clean the model column
-    df_new['model'] = df.model.apply(lambda x: x[1])
-    
-    # Strip "\n"s from the 'make' column
-    df_new['make'] = df.make.str.strip("\n")
-    
-    # Drop unnecesary column 'make_model'
-    df_new.drop(columns = "make_model", inplace = True)
-    
-    # Clean 'model_code' column
-    df_new.loc[df_new.model_code.notnull(), "model_code"] = df.model_code[df.model_code.notnull()].apply(lambda x: str(x)[4:-4])
-    
-    # Clean 'country_version' column
-    df_new.loc[df_new.country_version.notnull(), "country_version"] = df.country_version[df.country_version.notnull()].apply(lambda x: str(x)[4:-4])
-    
-    # Clean 'co2_emission' column
-    df_new['co2_emission'] = df.co2_emission.str[0].str.extract(r'(\d+)')
-    # Change the 'co2' columns data type to numeric
-    df_new['co2_emission'] = pd.to_numeric(df_new.co2_emission)
-    
-    # Clean 'cylinders' column
-    df_new['cylinders'] = df.cylinders.str[0].str.extract(r'(\d+)')
-    # Change the 'cylinders' columns data type to numeric
-    df_new['cylinders'] = pd.to_numeric(df_new['cylinders'])
-    
-    # Extract displacement values (and remove commas)
-    df_new['displacement'] = df.displacement.str[0].str.replace(",","").str.extract(r'(\d+)')
-    # Change the type of displacement from object to numeric
-    df_new['displacement'] = pd.to_numeric(df_new['displacement'])
+    # Change wrong data types to numeric
+    df['km'] = pd.to_numeric(df['km'])
+    df['consumption_comb'] = pd.to_numeric(df['consumption_comb'])
+    df['nr_of_doors'] = pd.to_numeric(df['nr_of_doors'])
+    df['nr_of_seats'] = pd.to_numeric(df['nr_of_seats'])
+    df['previous_owners'] = pd.to_numeric(df['previous_owners'])
+    df['weight_kg'] = pd.to_numeric(df['weight_kg'])
+    #df['gears'] = pd.to_numeric(df['gears']) # clean_m updated
 
-    # Extract 'next_inspection' values
-    df_new.next_inspection = df.next_inspection.str[0].str.strip("\n")
-    # Create a boolean column from `next_inspection`
-    df_new['next_inspection_bool'] = df_new.next_inspection.notnull()
+    # Change wrong data type to date_time
+    df['first_registration'] = pd.to_datetime(df.first_registration, format='%Y')
+
+    # Replace " " with NaNs
+    df.loc[df.next_inspection == "",'next_inspection'] = np.nan
+
+    # Drop 'prev_owner' column
+    df.drop('prev_owner', axis=1, inplace = True)
     
-    # Drop 'non-smoking_vehicle' column
-    df_new.drop("non_smoking_vehicle", axis=1, inplace=True)
-    
-    # Extract hp from 'hp' column
-    df_new['hp'] = df.hp.str.extract(r'(\d+)')
-    # Change datatype to numeric
-    df_new['hp'] = pd.to_numeric(df_new['hp'])
-    
-    # Drop 'kw' column
-    df_new.drop('kw', axis=1, inplace=True)
-    
-    # Clean 'km' column
-    df_new['km'] = df.km.str.replace(",", "").str.extract(r'(\d+)')
-    
-    
-    # Clean "offer_number' column
-    df_new['offer_number'] = df.offer_number.str[0].str.replace("\n","")
-    
-    # Create a boolean for checking "combined" consumption
-    comb_bool = df.consumption.str[0].str[0].str.contains("comb", na=False)
-    # Create a new column for 'consumption_comb'
-    df_new['consumption_comb'] = df[comb_bool].consumption.str[0].str[0].str.extract(r'(\d.\d|\d)')
-    # Drop 'consumption' column
-    df_new.drop('consumption', axis=1, inplace=True)
-    
-    # Tidy column names
-    df_new.columns = name_columns(df_new)
-    
-    # Tidy column names
-    df_new.columns = name_columns(df_new)
-    
-    # Change description from list to string
-    df_new['description'] = df['description'].str.join('').str.strip("\n")[0]
-    
-    return df_new
+    return df

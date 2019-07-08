@@ -40,10 +40,13 @@ def clean_m(data):
     df.loc[df['body'].notnull(), 'body'] = df.loc[df['body'].notnull(), 'body'].apply(lambda x: x[1])
     
     df.loc[df['body_color'].notnull(), 'body_color'] = df.loc[df['body_color'].notnull(), 'body_color'].apply(lambda x: x[1])
-         
-    df=df.join(df['entertainment_media'].str.join('|').str.get_dummies().add_prefix('entertainment_media_'))
+      
+        
+    ent=df[['entertainment_media']].dropna()
+    df=df.join(ent['entertainment_media'].str.join('|').str.get_dummies().add_prefix('ent_media_'))        
     
     df['gears']=df.gears.str[0].str.replace("\n", "")
+    df['gears'] = pd.to_numeric(df.gears)
     
     df['paint_type']=df.paint_type.str[0].str.replace("\n", "")
     
@@ -66,7 +69,9 @@ def clean_m(data):
     name_columns(df)
     
     drop_list=['entertainment_media', 'availability', 'body_color_original', 'full_service',
-       'last_timing_belt_service_date', 'null', 'registration', 'short_description']
+       'last_timing_belt_service_date', 'null', 'registration', 'short_description', 'gears',
+       'paint_type', 'inspection_new', 'available_after_days', 'last_service_date', 
+       'available_from', 'vat']
     df.drop(drop_list, axis=1, inplace=True)
         
     return df
