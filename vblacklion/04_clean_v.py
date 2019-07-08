@@ -114,7 +114,7 @@ def clean_v(data):
     powner = df_v.prev_owner
     powner_list = [item.split()[0] if type(item) == str else item for item in powner]
     df_v.prev_owner = pd.DataFrame(powner_list)
-    columns_to_drop = [ "electricity_consumption", "other_fuel_types", "weight", "comfort_convenience", "extras", ]
+    columns_to_drop = [ "other_fuel_types", "weight", "comfort_convenience", "extras", ]
     
     # Drop unnecesary columns
     df_v.drop(columns_to_drop, axis=1, inplace=True)
