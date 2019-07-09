@@ -72,9 +72,6 @@ def clean_t (data):
     # Tidy column names
     df_new.columns = name_columns(df_new)
     
-    # Tidy column names
-    df_new.columns = name_columns(df_new)
-    
     # Change description from list to string
     df_new['description'] = df['description'].str.join('').str.strip("\n")[0]
     
@@ -122,8 +119,8 @@ def clean_m(data):
     df['available_from'] = pd.to_datetime(df['available_from'])
         
     name_columns(df)
-    
-    drop_list=['entertainment_media', 'null', 'last_timing_belt_service_date', 'registration']
+    drop_list=['entertainment_media', 'availability', 'body_color_original', 'full_service',
+       'last_timing_belt_service_date', 'null', 'registration']
     df.drop(drop_list, axis=1, inplace=True)
         
     return df
@@ -136,10 +133,12 @@ def clean_v(data):
     df_v.columns = [x.casefold().strip().replace(" ","_").replace("_&_","_").replace(".","").replace("-", "_") for x in df_v.columns]
     
     # Create dummies using the items in the list of 'safety&security' column
-    df_v = df_v.join(df_v['comfort_convenience'].str.join('|').str.get_dummies().add_prefix('cc_'))
+    co_co = df_v[['comfort_convenience']].dropna()
+    df_v = df_v.join(co_co['comfort_convenience'].str.join('|').str.get_dummies().add_prefix('cc_'))
 
     # Create dummies using the items in the list of 'safety&security' column
-    df_v = df_v.join(df_v['extras'].str.join('|').str.get_dummies().add_prefix('ext_'))
+    ext = df_v[['extras']].dropna()
+    df_v = df_v.join(ext['extras'].str.join('|').str.get_dummies().add_prefix('ext_'))
 
     #cleaning and reassigning "drive_chain" column
     chain = df_v.drive_chain
@@ -147,7 +146,7 @@ def clean_v(data):
     df_v.drive_chain = pd.DataFrame(chain_str)
     
     #cleaning and reassigning "electricity_consumption" column
-    electricity = [item[0].strip() if type(item) == list else item for item in df_v.electricity_consumption]
+    electricity = [item[0].strip()[0] if type(item) == list else item for item in df_v.electricity_consumption]
     df_v.electricity_consumption = pd.DataFrame(electricity)
     #cleaning and reassigning "emission_class" column 1/3
     emis = df_v['emission_class']
@@ -234,7 +233,7 @@ def clean_v(data):
     powner = df_v.prev_owner
     powner_list = [item.split()[0] if type(item) == str else item for item in powner]
     df_v.prev_owner = pd.DataFrame(powner_list)
-    columns_to_drop = [ "electricity_consumption", "other_fuel_types", "weight", "comfort_convenience", "extras"]
+    columns_to_drop = ["other_fuel_types", "weight", "comfort_convenience", "extras"]
     
     # Drop unnecesary columns
     df_v.drop(columns_to_drop, axis=1, inplace=True)
