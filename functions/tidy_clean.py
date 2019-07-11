@@ -266,4 +266,10 @@ def clean_update(data):
     # Drop 'prev_owner' column
     df.drop('prev_owner', axis=1, inplace = True)
     
+    # Drop 'body_type' column (duplicate of 'body')
+    df.drop('body_type', axis=1, inplace = True)
+    
+    # Drop 'next_inspection' column (created a new column 'next_inspection_bool')
+    df.drop('next_inspection', axis=1, inplace = True)
+    
     return df
