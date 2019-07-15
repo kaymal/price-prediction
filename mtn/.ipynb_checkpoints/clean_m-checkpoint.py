@@ -42,7 +42,7 @@ def clean_m(data):
     name_columns(df)
     
     drop_list=['entertainment_media', 'availability', 'body_color_original', 'full_service',
-       'last_timing_belt_service_date', 'null', 'registration', 'short_description']
+       'last_timing_belt_service_date', 'null', 'registration']
     df.drop(drop_list, axis=1, inplace=True)
         
     return df
