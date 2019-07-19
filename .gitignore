@@ -30,3 +30,16 @@ functions/.ipynb_checkpoints/clean_m-checkpoint.py
 functions/.ipynb_checkpoints/clean_t-checkpoint.py
 trgt/.ipynb_checkpoints/EDA-t-checkpoint.ipynb
 functions/.ipynb_checkpoints/clean_v-checkpoint.py
+mtn/.ipynb_checkpoints/model_mt-checkpoint.ipynb
+trgt/tree.png
+trgt/tree.dot
+trgt/scout_no_missiing.pkl
+trgt/scout_for_model.pkl
+trgt/scout_for_missing_and_outliers.pkl
+trgt/groupby-example.ipynb
+trgt/.ipynb_checkpoints/output-checkpoint.html
+trgt/.ipynb_checkpoints/model-final-checkpoint.ipynb
+trgt/.ipynb_checkpoints/model-checkpoint.ipynb
+trgt/.ipynb_checkpoints/missing-value-outlier-analysis-checkpoint.ipynb
+trgt/.ipynb_checkpoints/groupby-example-checkpoint.ipynb
+trgt/.ipynb_checkpoints/feature-engineering-t-checkpoint.ipynb
