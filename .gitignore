@@ -43,3 +43,4 @@ trgt/.ipynb_checkpoints/model-checkpoint.ipynb
 trgt/.ipynb_checkpoints/missing-value-outlier-analysis-checkpoint.ipynb
 trgt/.ipynb_checkpoints/groupby-example-checkpoint.ipynb
 trgt/.ipynb_checkpoints/feature-engineering-t-checkpoint.ipynb
+trgt/mlruns/
