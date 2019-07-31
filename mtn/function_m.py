@@ -133,7 +133,7 @@ def clean_v(data):
     freg_list = ["".join(item).strip() if type(item) == list else item for item in freg]
     df_v.first_registration = pd.DataFrame(freg_list)
     
-    #cleaning and reassigning "fuel" column 1/3
+    #cleaning and reassigning "" column 1/3
     fuel = df_v.fuel
     fuel_list = ["".join(item).strip() if type(item) == list else item for item in fuel]
     df_v.fuel = pd.DataFrame(fuel_list)
