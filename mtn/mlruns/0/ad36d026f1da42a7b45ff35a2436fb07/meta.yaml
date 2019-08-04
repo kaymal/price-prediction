@@ -1,0 +1,15 @@
+artifact_uri: file:///C:/Users/H%20P/Documents/GitHub/fraud-detection/mtn/mlruns/0/ad36d026f1da42a7b45ff35a2436fb07/artifacts
+end_time: 1564779802446
+entry_point_name: ''
+experiment_id: '0'
+lifecycle_stage: active
+name: ''
+run_id: ad36d026f1da42a7b45ff35a2436fb07
+run_uuid: ad36d026f1da42a7b45ff35a2436fb07
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1564779802330
+status: 3
+tags: []
+user_id: H P
