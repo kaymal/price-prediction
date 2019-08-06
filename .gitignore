@@ -45,3 +45,4 @@ trgt/.ipynb_checkpoints/groupby-example-checkpoint.ipynb
 trgt/.ipynb_checkpoints/feature-engineering-t-checkpoint.ipynb
 trgt/mlruns/
 vblacklion/07_handling_missing_values.ipynb
+mlruns/0/meta.yaml
