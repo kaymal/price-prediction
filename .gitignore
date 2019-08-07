@@ -46,3 +46,5 @@ trgt/.ipynb_checkpoints/feature-engineering-t-checkpoint.ipynb
 trgt/mlruns/
 vblacklion/07_handling_missing_values.ipynb
 mlruns/0/meta.yaml
+trgt/.ipynb_checkpoints/data-checkpoint.json
+trgt/.ipynb_checkpoints/deployment-checkpoint.ipynb
