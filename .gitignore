@@ -48,3 +48,6 @@ vblacklion/07_handling_missing_values.ipynb
 mlruns/0/meta.yaml
 trgt/.ipynb_checkpoints/data-checkpoint.json
 trgt/.ipynb_checkpoints/deployment-checkpoint.ipynb
+trgt/.ipynb_checkpoints/tree-checkpoint.png
+trgt/.ipynb_checkpoints/model-initial-checkpoint.ipynb
+trgt/.ipynb_checkpoints/data-cleansing-t-1-checkpoint.ipynb
