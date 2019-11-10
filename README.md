@@ -12,4 +12,4 @@
 
 5. [Additional Files/Notebooks](https://github.com/kaymal/price-prediction/tree/master/trgt)
 
-6. [Test Flask App for Deployement](https://github.com/kaymal/price-prediction/blob/master/deployment-test.ipynb)
+6. [Test Flask App with a few Features](https://github.com/kaymal/price-prediction/blob/master/deployment-test.ipynb)
